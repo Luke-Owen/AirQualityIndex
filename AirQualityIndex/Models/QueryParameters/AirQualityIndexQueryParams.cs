@@ -2,14 +2,11 @@
 
 namespace AirQualityIndex.Models.QueryParameters;
 
-public class AirQualityIndexQueryParams
+public class AirQualityIndexQueryParams : CoordinatesQueryParams
 {
     [Required]
     public DateTime FromDate { get; set; }
     
     [Required]
     public DateTime ToDate { get; set; }
-    
-    [Required]
-    public KeyValuePair<decimal, decimal> Coordinates { get; set; }
 }

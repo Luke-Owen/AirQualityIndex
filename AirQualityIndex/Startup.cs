@@ -7,8 +7,6 @@ namespace AirQualityIndex;
 
 public class Startup(IConfiguration configuration)
 {
-    private IConfiguration Configuration { get; } = configuration;
-
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
@@ -28,7 +26,7 @@ public class Startup(IConfiguration configuration)
                     .AllowAnyHeader());
         });
         
-        var redisConnectionString = Configuration.GetSection("Redis:ConnectionString").Value;
+        var redisConnectionString = configuration.GetSection("Redis:ConnectionString").Value;
 
         if (redisConnectionString == null)
         {
@@ -39,7 +37,7 @@ public class Startup(IConfiguration configuration)
         services.AddScoped<IRedisService, RedisService>();
         
         services.AddMemoryCache();
-        services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+        services.Configure<IpRateLimitOptions>(configuration.GetSection("IpRateLimiting"));
         services.AddInMemoryRateLimiting();
         services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
     }
