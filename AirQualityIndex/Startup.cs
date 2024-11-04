@@ -1,5 +1,6 @@
 using AirQualityIndex.Interfaces;
 using AirQualityIndex.Services;
+using AspNetCoreRateLimit;
 using StackExchange.Redis;
 
 namespace AirQualityIndex;
@@ -36,7 +37,11 @@ public class Startup(IConfiguration configuration)
         
         services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
         services.AddScoped<IRedisService, RedisService>();
-
+        
+        services.AddMemoryCache();
+        services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+        services.AddInMemoryRateLimiting();
+        services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -64,5 +69,7 @@ public class Startup(IConfiguration configuration)
         {
             endpoints.MapControllers();
         });
+        
+        app.UseIpRateLimiting();
     }
 }
