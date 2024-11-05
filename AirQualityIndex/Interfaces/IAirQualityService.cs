@@ -4,8 +4,8 @@ namespace AirQualityIndex.Interfaces;
 
 public interface IAirQualityService
 {
-    public Task<List<AirQuality>> GetAirQuality(DateTime fromDate, DateTime toDate, string latitude, string longitude);
-    public Task<AirQuality> GetCurrentAirQuality(string latitude, string longitude);
-    public string AirQualityIndexKey(DateTime fromDate, DateTime toDate, string latitude, string longitude);
+    public Task<List<AirQuality>> GetAirQuality(DateTime fromDate, DateTime toDate, decimal latitude, decimal longitude);
+    public Task<AirQuality> GetCurrentAirQuality(decimal latitude, decimal longitude);
+    public string AirQualityIndexKey(DateTime fromDate, DateTime toDate, decimal latitude, decimal longitude);
     
 }

@@ -9,7 +9,8 @@ namespace AirQualityIndex.Controllers;
 [Route("v1/[controller]")]
 public class AirQualityController(IAirQualityService airQualityService, IRedisService redisService) : ControllerBase
 {
-
+    [ProducesResponseType<List<AirQuality>>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpGet("[action]")]
     public async Task<IActionResult> GetAirQualityIndex([FromQuery] AirQualityIndexQueryParams queryParams)
     {
@@ -27,16 +28,12 @@ public class AirQualityController(IAirQualityService airQualityService, IRedisSe
         return Ok(airQuality);
     }
 
+    [ProducesResponseType<AirQuality>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpGet("[action]")]
     public async Task<IActionResult> GetCurrentAirQualityIndex([FromQuery] CoordinatesQueryParams queryParams)
     {
         var airQuality = await airQualityService.GetCurrentAirQuality(queryParams.Latitude, queryParams.Longitude);
         return Ok(airQuality);
-    }
-
-    [HttpGet("[action]")]
-    public IActionResult GetAppStatus()
-    {
-        return Ok("App is running");
     }
 }
