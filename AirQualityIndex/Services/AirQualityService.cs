@@ -10,8 +10,8 @@ namespace AirQualityIndex.Services;
 
 public class AirQualityService : IAirQualityService
 {
-    private readonly string _baseUrl;
-    private readonly string _apiKey;
+    private readonly string? _baseUrl;
+    private readonly string? _apiKey;
     private readonly HttpClient _httpClient;
     
     public AirQualityService(IConfiguration configuration, HttpClient httpClient)
@@ -19,8 +19,8 @@ public class AirQualityService : IAirQualityService
         _httpClient = httpClient;
         var baseUrl = configuration.GetSection("OpenWeatherMapApiUrl").Value;
         var apiKey = Environment.GetEnvironmentVariable("OpenWeatherMapApiKey");
-        _baseUrl = baseUrl ?? throw new NullReferenceException("The OpenWeatherMapApiUrl configuration is missing");
-        _apiKey = apiKey ?? throw new NullReferenceException("The OpenWeatherMapApiKey is missing");
+        _baseUrl = baseUrl;
+        _apiKey = apiKey;
     }
     
     public async Task<List<AirQualityResponseModel>> GetAirQuality(DateTime fromDate, DateTime toDate, decimal latitude, decimal longitude)
