@@ -84,7 +84,7 @@ public class AirQualityService : IAirQualityService
         
         var result = JsonConvert.DeserializeObject<AirQualityResponse>(resultContent);
         
-        if (result?.List[0].Main is null)
+        if (result?.List?[0].Main is null)
             throw new JsonException($"Unable to deserialize air quality json. \n {resultContent}");
         
         return new AirQualityResponseModel

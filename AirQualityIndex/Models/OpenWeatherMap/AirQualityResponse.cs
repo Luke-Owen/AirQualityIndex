@@ -5,5 +5,5 @@ namespace AirQualityIndex.Models.OpenWeatherMap;
 public class AirQualityResponse
 {
     [JsonPropertyName("list")]
-    public List<AirQuality> List { get; set; }
+    public List<AirQuality>? List { get; set; }
 }
