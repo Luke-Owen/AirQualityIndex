@@ -29,36 +29,38 @@ public class Startup(IConfiguration configuration)
                     .AllowAnyHeader());
         });
         
-        var redisConnectionString = configuration.GetSection("Redis:ConnectionString").Value;
+        //var redisConnectionString = configuration.GetSection("Redis:ConnectionString").Value;
 
-        if (redisConnectionString == null)
-        {
-            throw new NullReferenceException("Redis connection string is null");
-        }
+        // if (redisConnectionString == null)
+        // {
+        //     throw new NullReferenceException("Redis connection string is null");
+        // }
         
-        services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
-        services.AddScoped<IRedisService, RedisService>();
+        //services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
+        //services.AddScoped<IRedisService, RedisService>();
         services.AddHttpClient();
         services.AddMemoryCache();
         services.Configure<IpRateLimitOptions>(configuration.GetSection("IpRateLimiting"));
         services.AddInMemoryRateLimiting();
         services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+        services.AddHealthChecks();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        if (env.IsDevelopment())
-        {
+        //if (env.IsDevelopment())
+        //{
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Air Quality API v1"));
-        }
-        else
-        {
-            app.UseExceptionHandler("/Home/Error");
+        //}
+        //else
+        //{
+            //app.UseExceptionHandler("/Home/Error");
             app.UseHsts();
-        }
+        //}
 
+        
         app.UseHttpsRedirection();
         app.UseRouting();
 
@@ -72,5 +74,10 @@ public class Startup(IConfiguration configuration)
         });
         
         app.UseIpRateLimiting();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapHealthChecks("/health");
+        });
     }
 }
