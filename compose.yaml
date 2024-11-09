@@ -1,5 +1,6 @@
 services:
   app:
+    image: air-quality-index:latest
     container_name: air-quality-index
     depends_on:
       redis:
@@ -7,9 +8,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
     ports:
       - "8080:8080"
-        
+      - "8081:8081"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      
   redis:
     container_name: redis-cache
     image: "redis:alpine"

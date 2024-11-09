@@ -24,20 +24,20 @@ public class Startup(IConfiguration configuration)
         {
             options.AddPolicy("AllowSpecificOrigin",
                 builder => builder
-                    .WithOrigins("https://localhost:44356/")
+                    .WithOrigins(
+                        "https://localhost:44356/", 
+                        "http://localhost:8080/", 
+                        "https://localhost:8081/")
                     .WithMethods("GET")
                     .AllowAnyHeader());
         });
         
-        //var redisConnectionString = configuration.GetSection("Redis:ConnectionString").Value;
-
-        // if (redisConnectionString == null)
-        // {
-        //     throw new NullReferenceException("Redis connection string is null");
-        // }
+        var redisConnectionString = configuration.GetSection("Redis:ConnectionString").Value;
         
-        //services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
-        //services.AddScoped<IRedisService, RedisService>();
+        if (redisConnectionString != null)
+            services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
+        
+        services.AddScoped<IRedisService, RedisService>();
         services.AddHttpClient();
         services.AddMemoryCache();
         services.Configure<IpRateLimitOptions>(configuration.GetSection("IpRateLimiting"));
@@ -48,17 +48,17 @@ public class Startup(IConfiguration configuration)
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        //if (env.IsDevelopment())
-        //{
+        if (env.IsDevelopment())
+        {
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Air Quality API v1"));
-        //}
-        //else
-        //{
-            //app.UseExceptionHandler("/Home/Error");
+        }
+        else
+        {
+            app.UseExceptionHandler("/Home/Error");
             app.UseHsts();
-        //}
+        }
 
         
         app.UseHttpsRedirection();
