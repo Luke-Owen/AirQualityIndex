@@ -13,14 +13,14 @@ ARG BUILD_CONFIGURATION=Release
 COPY AirQualityIndex ./
 
 # Publish the application
-RUN dotnet publish -c $BUILD_CONFIGURATION -o publish
+RUN dotnet publish -c "$BUILD_CONFIGURATION" -o publish
 
 # Build the runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 
 # Install curl command without additional packages for health check
 # Create a non-root user and group for better security
-RUN bash -c "apt-get update && apt-get install -y --no-install-recommends curl && groupadd -g 1001 appuser &&  useradd -r -u 1001 -g appuser appuser"
+RUN bash -c "apt-get update && apt-get install -y --no-install-recommends curl && apt-get clean && groupadd -g 1001 appuser &&  useradd -r -u 1001 -g appuser appuser"
 
 # Set the working directory for the runtime container
 WORKDIR /app
