@@ -10,7 +10,7 @@ RUN dotnet restore
 ARG BUILD_CONFIGURATION=Release
 
 # Copy the rest of the application code
-COPY . .
+COPY AirQualityIndex ./
 
 # Publish the application
 RUN dotnet publish -c $BUILD_CONFIGURATION -o publish
