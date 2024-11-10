@@ -6,11 +6,14 @@ WORKDIR /app
 COPY AirQualityIndex/AirQualityIndex.csproj ./
 RUN dotnet restore 
 
+# Use a build argument to set the configuration (default to Release)
+ARG BUILD_CONFIGURATION=Release
+
 # Copy the rest of the application code
 COPY . .
 
 # Publish the application
-RUN dotnet publish -c Debug -o publish
+RUN dotnet publish -c $BUILD_CONFIGURATION -o publish
 
 # Build the runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime

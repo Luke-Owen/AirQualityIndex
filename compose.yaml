@@ -8,6 +8,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        BUILD_CONFIGURATION: Debug
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
