@@ -38,9 +38,6 @@ RUN chown -R appuser:appuser /app
 # Switch to the non-root user
 USER appuser
 
-# Set the environment to Development
-ENV ASPNETCORE_ENVIRONMENT=Development
-
 # Expose the ports the app will run on
 EXPOSE 8080
 EXPOSE 8081
