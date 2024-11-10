@@ -20,13 +20,13 @@ public class RedisService(IConnectionMultiplexer redis) : IRedisService
         await db.StringSetAsync(key, serializedValue, expiry);
     }
 
-    public async Task<T> GetAsync<T>(string key)
+    public async Task<T?> GetAsync<T>(string key)
     {
         var db = GetDatabase();
         var serializedValue = await db.StringGetAsync(key);
-        return string.IsNullOrEmpty(serializedValue) 
+        return serializedValue.IsNullOrEmpty
             ? default 
-            : JsonSerializer.Deserialize<T>(serializedValue);
+            : JsonSerializer.Deserialize<T>(serializedValue!);
     }
 
     // Set operations
@@ -53,7 +53,10 @@ public class RedisService(IConnectionMultiplexer redis) : IRedisService
     public async Task<string> GetHashFieldAsync(string hashKey, string field)
     {
         var db = GetDatabase();
-        return await db.HashGetAsync(hashKey, field);
+        var result = await db.HashGetAsync(hashKey, field);
+        return result.IsNullOrEmpty
+            ? string.Empty
+            : result.ToString();
     }
 
     public async Task<Dictionary<string, string>> GetAllHashFieldsAsync(string hashKey)
@@ -61,9 +64,9 @@ public class RedisService(IConnectionMultiplexer redis) : IRedisService
         var db = GetDatabase();
         var hashEntries = await db.HashGetAllAsync(hashKey);
         var result = new Dictionary<string, string>();
-        foreach (var entry in hashEntries)
+        foreach (var entry in hashEntries.Where(x => x.Name.HasValue && x.Value.HasValue))
         {
-            result[entry.Name] = entry.Value;
+            result[entry.Name!] = entry.Value!;
         }
         return result;
     }

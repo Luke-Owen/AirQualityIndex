@@ -8,7 +8,7 @@ public interface IRedisService
 {
     // Basic String operations
     Task SetAsync<T>(string key, T value, TimeSpan? expiry = null);
-    Task<T> GetAsync<T>(string key);
+    Task<T?> GetAsync<T>(string key);
 
     // Set operations
     Task AddToSetAsync(string key, string value);

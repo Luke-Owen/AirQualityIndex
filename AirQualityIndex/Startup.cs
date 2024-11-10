@@ -12,6 +12,7 @@ public class Startup(IConfiguration configuration)
     {
         Env.Load();
         
+        services.AddHealthChecks();
         services.AddControllers();
 
         services.AddTransient<IAirQualityService, AirQualityService>();
@@ -43,7 +44,6 @@ public class Startup(IConfiguration configuration)
         services.Configure<IpRateLimitOptions>(configuration.GetSection("IpRateLimiting"));
         services.AddInMemoryRateLimiting();
         services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
-        services.AddHealthChecks();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
