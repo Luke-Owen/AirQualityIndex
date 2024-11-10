@@ -15,9 +15,9 @@ RUN dotnet publish -c Debug -o publish
 # Build the runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 
-# Install curl command for health check
-RUN apt-get update 
-RUN apt-get --yes install curl
+# Install curl command without additional packages for health check
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl
 
 # Create a non-root user and group for better security
 RUN groupadd -g 1001 appuser && \
