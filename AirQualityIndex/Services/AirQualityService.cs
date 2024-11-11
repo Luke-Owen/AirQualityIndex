@@ -73,7 +73,6 @@ public class AirQualityService : IAirQualityService
         
         uriBuilder.Query = query.ToString();
         
-        // make API Call with the HttpClient, will need to set it up.
         var response = await _httpClient.GetAsync(uriBuilder.ToString());
         var resultContent = await response.Content.ReadAsStringAsync();
         

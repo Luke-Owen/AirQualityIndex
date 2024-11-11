@@ -1,0 +1,41 @@
+services:
+  app:
+    image: air-quality-index:latest
+    container_name: air-quality-index
+    depends_on:
+      redis:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_CONFIGURATION: Debug
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/Health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    env_file:
+      - AirQualityIndex/.env
+      
+  redis:
+    container_name: redis-cache
+    image: "redis:alpine"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-data:/data
+
+volumes:
+  redis-data:

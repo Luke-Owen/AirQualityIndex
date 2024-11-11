@@ -12,6 +12,7 @@ public class Startup(IConfiguration configuration)
     {
         Env.Load();
         
+        services.AddHealthChecks();
         services.AddControllers();
 
         services.AddTransient<IAirQualityService, AirQualityService>();
@@ -24,19 +25,19 @@ public class Startup(IConfiguration configuration)
         {
             options.AddPolicy("AllowSpecificOrigin",
                 builder => builder
-                    .WithOrigins("https://localhost:44356/")
+                    .WithOrigins(
+                        "https://localhost:44356/", 
+                        "http://localhost:8080/", 
+                        "https://localhost:8081/")
                     .WithMethods("GET")
                     .AllowAnyHeader());
         });
         
         var redisConnectionString = configuration.GetSection("Redis:ConnectionString").Value;
-
-        if (redisConnectionString == null)
-        {
-            throw new NullReferenceException("Redis connection string is null");
-        }
         
-        services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
+        if (redisConnectionString != null)
+            services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
+        
         services.AddScoped<IRedisService, RedisService>();
         services.AddHttpClient();
         services.AddMemoryCache();
@@ -59,6 +60,7 @@ public class Startup(IConfiguration configuration)
             app.UseHsts();
         }
 
+        
         app.UseHttpsRedirection();
         app.UseRouting();
 
@@ -68,6 +70,7 @@ public class Startup(IConfiguration configuration)
 
         app.UseEndpoints(endpoints =>
         {
+            endpoints.MapHealthChecks("/health");
             endpoints.MapControllers();
         });
         
